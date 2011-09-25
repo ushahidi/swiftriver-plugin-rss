@@ -107,12 +107,15 @@ class Controller_Crawler_Rss extends Controller_Crawler_Main {
 				$source = ORM::factory('source')
 					->where( 'source_link', '=', $feed->get_link() )
 					->find();
-				$source->source_link = $feed->get_link();
-				$source->service = 'rss';
-				$source->source_name = $feed->get_title();
-				$source->source_description = $feed->get_description();
-				$source->source_username = $feed->get_author();
-				$source->save();
+				if ( ! $source->loaded() )
+				{	
+					$source->source_link = $feed->get_link();
+					$source->service = 'rss';
+					$source->source_name = $feed->get_title();
+					$source->source_description = $feed->get_description();
+					$source->source_username = $feed->get_author();
+					$source->save();
+				}
 
 				foreach($feed->get_items() as $feed_item)
 				{
@@ -125,19 +128,22 @@ class Controller_Crawler_Rss extends Controller_Crawler_Main {
 						$item = ORM::factory('item')
 							->where( 'item_orig_id', '=', trim((string) $feed_item->get_link()) )
 							->find();
-						$item->service = 'rss';
-						$item->source_id = $source->id; // the source we just saved above
-						$item->item_orig_id = trim((string) $feed_item->get_link());
-						$item->project_id = $this->project->id;
-						$item->feed_id = $this->feed->id;
-						$item->item_title = trim(strip_tags(str_replace('<', ' <', $feed_item->get_title())));
-						$item->item_content = trim(strip_tags(str_replace('<', ' <', $feed_item->get_description())));
-						$item->item_raw = $feed_item->get_description();
-						$item->item_author = $feed->get_title();
-						$item->item_locale = $locale;
-						$item->item_date_pub = date("Y-m-d H:i:s", strtotime($feed_item->get_date()));
-						$item->item_date_add = date("Y-m-d H:i:s", time());
-						$item->save();
+						if ( ! $item->loaded() )
+						{	
+							$item->service = 'rss';
+							$item->source_id = $source->id; // the source we just saved above
+							$item->item_orig_id = trim((string) $feed_item->get_link());
+							$item->project_id = $this->project->id;
+							$item->feed_id = $this->feed->id;
+							$item->item_title = trim(strip_tags(str_replace('<', ' <', $feed_item->get_title())));
+							$item->item_content = trim(strip_tags(str_replace('<', ' <', $feed_item->get_description())));
+							$item->item_raw = $feed_item->get_description();
+							$item->item_author = $feed->get_title();
+							$item->item_locale = $locale;
+							$item->item_date_pub = date("Y-m-d H:i:s", strtotime($feed_item->get_date()));
+							$item->item_date_add = date("Y-m-d H:i:s", time());
+							$item->save();
+						}
 
 						// Save Link separately
 						$link = ORM::factory('link')
