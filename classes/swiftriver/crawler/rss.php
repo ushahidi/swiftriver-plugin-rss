@@ -59,20 +59,25 @@ class Swiftriver_Crawler_Rss {
 		include_once Kohana::find_file('vendor', 'simplepie/SimplePie.compiled');
 		include_once Kohana::find_file('vendor', 'simplepie/idn/idna_convert.class');
 
-		if
-		(isset($options['url']) AND $this->_is_url($options['url']))
+		if (isset($options['url']) AND Valid::url($options['url']))
 		{
+			// Decode any HTML entities in the URL because
+			// some RSS services e.g. Google News RSS return a 302 when
+			// "&amp;" is present. Passing the url through this function
+			// ensures that such entities are replaced with the applicable
+			// characters
+			$feed_url = html_entity_decode($options['url']);
+			
 			// Log file writes have to be immediate because of fork()
 			// otherwise the log shall be written when process exits
-			Kohana::$log->add(Log::INFO, "RSS Crawler fetching :url",
-			    array(':url' => $options['url']));
+			Kohana::$log->add(Log::INFO, "RSS Crawler fetching :url", array(':url' => $feed_url));
 			Kohana::$log->write();
 		    
 			$feed = new SimplePie();
 			
 			// Set which feed to process - use the feed URL returned
 			// by the feed validation
-			$feed->set_feed_url($options['url']);
+			$feed->set_feed_url($feed_url);
 			
 			// Allow us to choose to not re-order the items by date.
 			$feed->enable_order_by_date(TRUE);
@@ -125,10 +130,5 @@ class Swiftriver_Crawler_Rss {
 				}		
 			}
 		}		
-	}
-	
-	private function _is_url($url = NULL)
-	{
-		return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);
-	}
+	}	
 }
