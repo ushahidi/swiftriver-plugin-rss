@@ -115,7 +115,7 @@ class Rss_Init {
 		if ($file['key'] != 'opml_import')
 			return;
 			
-		if ( ! Upload::type($file, array('xml')))
+		if ( ! Upload::type($file, array('xml', 'opml')))
 			throw new Swiftriver_Exception_Channel_Option('Invalid file type');
 			
 		// Begin processing the feed
