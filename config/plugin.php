@@ -30,7 +30,8 @@ return array(
 			'url' => array(
 				'label' => __('Feed URL'),
 				'type' => 'text',
-				'placeholder' => 'E.g. ihub.co.ke/blog/feed'
+				'placeholder' => 'E.g. ihub.co.ke/blog/feed',
+				'default_quota' => 999
 			),
 			'opml_import' => array(
 				'label' => 'OPML File',
