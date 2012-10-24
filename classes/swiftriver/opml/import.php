@@ -7,7 +7,7 @@
  * @package     Swiftriver - https://github.com/ushahidi/Swiftriver_v2
  * @category    Libraries
  * @copyright   (c) 2012 Ushahidi Inc <http://www.ushahidi.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ * @license     http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL) 
  */
 class Swiftriver_OPML_Import {
 	
