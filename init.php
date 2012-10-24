@@ -102,6 +102,7 @@ class Rss_Init {
 
 			$option_data['value'] = $feed['value'];
 			$option_data['title'] = $feed['title'];
+			$option_data['quota_usage'] = 1;
 	}
 	
 	/**
