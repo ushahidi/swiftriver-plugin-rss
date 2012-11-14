@@ -24,7 +24,7 @@ class Swiftriver_Crawler_Rss {
 	public function crawl($river_id)
 	{
 		// If the river ID is NULL or non-existent, exit
-		if (empty($river_id) OR ! ORM::factory('river', $river_id)->loaded())
+		if (empty($river_id) OR ! ORM::factory('River', $river_id)->loaded())
 		{
 			Kohana::$log->add(Log::ERROR, 'Invalid database river id: :river_id', 
 			    array(':river_id' => $river_id));
