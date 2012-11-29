@@ -134,7 +134,8 @@ class Rss_Init {
 			$file['option_data'][] = array(
 				'key' => 'url',
 				'value' => $feed['url'],
-				'title' => $feed['title']
+				'title' => $feed['title'],
+				'quota_usage' => 1
 			);
 		}
 	}
