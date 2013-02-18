@@ -22,10 +22,13 @@ class Rss_Init {
 		Swiftriver_Event::add('swiftriver.welcome.create_river', array($this, 'add_chanel_options'));
 	    
 		// Validate the channel option data before it's saved to the DB
-		Swiftriver_Event::add('swiftriver.channel.option.pre_save', array($this, 'validate'));
+		Swiftriver_Event::add('swiftriver.channel.validate', array($this, 'validate'));
 		
 		// Extract feed urls from an OPML file upload
 		Swiftriver_Event::add('swiftriver.channel.option.file', array($this, 'opml_import'));
+		
+		// Create a string representation of the channel
+		Swiftriver_Event::add('swiftriver.channel.format', array($this, 'format'));
 	}
 	
 	/**
@@ -81,7 +84,27 @@ class Rss_Init {
 			HTML::anchor(URL::site('settings/rsswelcome'), __('RSS Starter URLs')).
 			'</li>';
 	}
-
+	
+	/**
+	 * Call back method for swiftriver.channel.format
+	 */
+	public function format()
+	{
+		// Get the event data
+		$channel_data =  & Swiftriver_Event::$data;
+		
+		if (isset($channel_data['channel']) AND $channel_data['channel'] == 'rss')
+		{
+			if (isset($channel_data['parameters']['title']))
+			{
+				$channel_data['display_name'] = $channel_data['parameters']['title'];
+			}
+			else
+			{
+				$channel_data['display_name'] = $channel_data['parameters']['value'];
+			}
+		}
+	}
 
 	/**
 	 * Call back method for swiftriver.channel.option.pre_save to validate channel settings
@@ -91,18 +114,17 @@ class Rss_Init {
 		// Get the event data
 		$option_data = & Swiftriver_Event::$data;
 		
-		
 		if ( ! (isset($option_data['channel']) AND $option_data['channel'] == 'rss'))
 			return;
-			
-			$url = $option_data['value'];
+		
+		$url = $option_data['parameters']['value'];
 
-			if ( ! ($feed = RSS_Util::validate_feed_url($url)))
-				throw new Swiftriver_Exception_Channel_Option('Invalid URL');
+		if ( ! ($feed = RSS_Util::validate_feed_url($url)))
+			throw new Swiftriver_Exception_Channel_Option('Invalid URL');
 
-			$option_data['value'] = $feed['value'];
-			$option_data['title'] = $feed['title'];
-			$option_data['quota_usage'] = 1;
+		$option_data['parameters']['value'] = $feed['value'];
+		$option_data['parameters']['title'] = $feed['title'];
+		$option_data['parameters']['quota_usage'] = 1;
 	}
 	
 	/**
