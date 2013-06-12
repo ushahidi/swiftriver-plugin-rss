@@ -12,15 +12,12 @@ class Rss_Init {
 
 	public function __construct() 
 	{
-	    // Register as a crawler
-	    Swiftriver_Crawlers::register('rss', array(new Swiftriver_Crawler_Rss(), 'crawl'));
-
 		// Hook into the settings page
 		Swiftriver_Event::add('swiftriver.settings.nav', array($this, 'settings_nav'));
 		
 		// Hook into welcome page new river creation
 		Swiftriver_Event::add('swiftriver.welcome.create_river', array($this, 'add_chanel_options'));
-	    
+		
 		// Validate the channel option data before it's saved to the DB
 		Swiftriver_Event::add('swiftriver.channel.validate', array($this, 'validate'));
 		
